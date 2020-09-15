@@ -1,0 +1,192 @@
+From e080dd72e762b240cca897d6302062cf23881c84 Mon Sep 17 00:00:00 2001
+From: Scott Mabin <scott@mabez.dev>
+Date: Sat, 12 Sep 2020 23:36:21 +0100
+Subject: [PATCH 4/4] Add some Xtensa targets. ESP32, ESP8266 and a generic
+ Xtensa target.
+
+---
+ compiler/rustc_target/src/spec/mod.rs         |  4 ++
+ .../src/spec/xtensa_esp32_none_elf.rs         | 46 +++++++++++++++++++
+ .../src/spec/xtensa_esp8266_none_elf.rs       | 46 +++++++++++++++++++
+ .../rustc_target/src/spec/xtensa_none_elf.rs  | 45 ++++++++++++++++++
+ 4 files changed, 141 insertions(+)
+ create mode 100644 compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
+ create mode 100644 compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
+ create mode 100644 compiler/rustc_target/src/spec/xtensa_none_elf.rs
+
+diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
+index d6e8b304380..91b54c6f98a 100644
+--- a/compiler/rustc_target/src/spec/mod.rs
++++ b/compiler/rustc_target/src/spec/mod.rs
+@@ -668,6 +668,10 @@ supported_targets! {
+ 
+     ("nvptx64-nvidia-cuda", nvptx64_nvidia_cuda),
+ 
++    ("xtensa-esp32-none-elf", xtensa_esp32_none_elf),
++    ("xtensa-esp8266-none-elf", xtensa_esp8266_none_elf),
++    ("xtensa-none-elf", xtensa_none_elf),
++
+     ("i686-wrs-vxworks", i686_wrs_vxworks),
+     ("x86_64-wrs-vxworks", x86_64_wrs_vxworks),
+     ("armv7-wrs-vxworks-eabihf", armv7_wrs_vxworks_eabihf),
+diff --git a/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
+new file mode 100644
+index 00000000000..31361adab1b
+--- /dev/null
++++ b/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
+@@ -0,0 +1,46 @@
++use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, TargetResult, RelocModel};
++
++pub fn target() -> TargetResult {
++    Ok(Target {
++        llvm_target: "xtensa-none-elf".to_string(),
++        target_endian: "little".to_string(),
++        target_pointer_width: "32".to_string(),
++        target_c_int_width: "32".to_string(),
++        data_layout: "e-m:e-p:32:32-i8:8:32-i16:16:32-i64:64-n32".to_string(),
++        arch: "xtensa".to_string(),
++        target_os: "none".to_string(),
++        target_env: String::new(),
++        target_vendor: String::new(),
++        linker_flavor: LinkerFlavor::Gcc,
++
++        options: TargetOptions {
++            executables: true,
++            cpu: "esp32".to_string(),
++            linker: Some("xtensa-esp32-elf-gcc".to_string()),
++
++            max_atomic_width: Some(32),
++
++            // Because these devices have very little resources having an
++            // unwinder is too onerous so we default to "abort" because the
++            // "unwind" strategy is very rare.
++            panic_strategy: PanicStrategy::Abort,
++
++            // Similarly, one almost always never wants to use relocatable
++            // code because of the extra costs it involves.
++            relocation_model: RelocModel::Static,
++
++            emit_debug_gdb_scripts: false,
++
++            unsupported_abis: vec![
++                Abi::Stdcall,
++                Abi::Fastcall,
++                Abi::Vectorcall,
++                Abi::Thiscall,
++                Abi::Win64,
++                Abi::SysV64,
++            ],
++
++            ..Default::default()
++        },
++    })
++}
+\ No newline at end of file
+diff --git a/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
+new file mode 100644
+index 00000000000..b26a822b17a
+--- /dev/null
++++ b/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
+@@ -0,0 +1,46 @@
++use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, TargetResult, RelocModel};
++
++pub fn target() -> TargetResult {
++    Ok(Target {
++        llvm_target: "xtensa-none-elf".to_string(),
++        target_endian: "little".to_string(),
++        target_pointer_width: "32".to_string(),
++        target_c_int_width: "32".to_string(),
++        data_layout: "e-m:e-p:32:32-i8:8:32-i16:16:32-i64:64-n32".to_string(),
++        arch: "xtensa".to_string(),
++        target_os: "none".to_string(),
++        target_env: String::new(),
++        target_vendor: String::new(),
++        linker_flavor: LinkerFlavor::Gcc,
++
++        options: TargetOptions {
++            executables: true,
++            cpu: "esp8266".to_string(),
++            linker: Some("xtensa-lx106-elf-gcc".to_string()),
++
++            max_atomic_width: Some(32),
++
++            // Because these devices have very little resources having an
++            // unwinder is too onerous so we default to "abort" because the
++            // "unwind" strategy is very rare.
++            panic_strategy: PanicStrategy::Abort,
++
++            // Similarly, one almost always never wants to use relocatable
++            // code because of the extra costs it involves.
++            relocation_model: RelocModel::Static,
++
++            emit_debug_gdb_scripts: false,
++
++            unsupported_abis: vec![
++                Abi::Stdcall,
++                Abi::Fastcall,
++                Abi::Vectorcall,
++                Abi::Thiscall,
++                Abi::Win64,
++                Abi::SysV64,
++            ],
++
++            ..Default::default()
++        },
++    })
++}
+\ No newline at end of file
+diff --git a/compiler/rustc_target/src/spec/xtensa_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_none_elf.rs
+new file mode 100644
+index 00000000000..52cddb974d4
+--- /dev/null
++++ b/compiler/rustc_target/src/spec/xtensa_none_elf.rs
+@@ -0,0 +1,45 @@
++use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, TargetResult, RelocModel};
++
++pub fn target() -> TargetResult {
++    Ok(Target {
++        llvm_target: "xtensa-none-elf".to_string(),
++        target_endian: "little".to_string(),
++        target_pointer_width: "32".to_string(),
++        target_c_int_width: "32".to_string(),
++        data_layout: "e-m:e-p:32:32-i8:8:32-i16:16:32-i64:64-n32".to_string(),
++        arch: "xtensa".to_string(),
++        target_os: "none".to_string(),
++        target_env: String::new(),
++        target_vendor: String::new(),
++        linker_flavor: LinkerFlavor::Gcc,
++
++        options: TargetOptions {
++            executables: true,
++            linker: Some("xtensa-esp32-elf-gcc".to_string()),
++
++            max_atomic_width: Some(32),
++
++            // Because these devices have very little resources having an
++            // unwinder is too onerous so we default to "abort" because the
++            // "unwind" strategy is very rare.
++            panic_strategy: PanicStrategy::Abort,
++
++            // Similarly, one almost always never wants to use relocatable
++            // code because of the extra costs it involves.
++            relocation_model: RelocModel::Static,
++
++            emit_debug_gdb_scripts: false,
++
++            unsupported_abis: vec![
++                Abi::Stdcall,
++                Abi::Fastcall,
++                Abi::Vectorcall,
++                Abi::Thiscall,
++                Abi::Win64,
++                Abi::SysV64,
++            ],
++
++            ..Default::default()
++        },
++    })
++}
+\ No newline at end of file
+-- 
+2.26.2
+

@@ -1,0 +1,70 @@
+From 46cc4e195f566f8740e2b9abec181e7c5f2e4bea Mon Sep 17 00:00:00 2001
+From: Scott Mabin <scott@mabez.dev>
+Date: Sat, 12 Sep 2020 23:20:14 +0100
+Subject: [PATCH 2/4] Teach rustc about the Xtensa arch.
+
+---
+ compiler/rustc_llvm/build.rs                     | 1 +
+ compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp | 7 +++++++
+ compiler/rustc_llvm/src/lib.rs                   | 8 ++++++++
+ 3 files changed, 16 insertions(+)
+
+diff --git a/compiler/rustc_llvm/build.rs b/compiler/rustc_llvm/build.rs
+index 7f1e5cf336a..d17b35d9019 100644
+--- a/compiler/rustc_llvm/build.rs
++++ b/compiler/rustc_llvm/build.rs
+@@ -85,6 +85,7 @@ fn main() {
+         "sparc",
+         "nvptx",
+         "hexagon",
++        "xtensa"
+     ];
+ 
+     let mut version_cmd = Command::new(&llvm_config);
+diff --git a/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp b/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
+index 7b1c3f9ba2c..c08ca809508 100644
+--- a/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
++++ b/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
+@@ -247,6 +247,12 @@ void LLVMRustAddLastExtensionPasses(
+ #define SUBTARGET_SPARC
+ #endif
+ 
++#ifdef LLVM_COMPONENT_XTENSA
++#define SUBTARGET_XTENSA SUBTARGET(XTENSA)
++#else
++#define SUBTARGET_XTENSA
++#endif
++
+ #ifdef LLVM_COMPONENT_HEXAGON
+ #define SUBTARGET_HEXAGON SUBTARGET(Hexagon)
+ #else
+@@ -264,6 +270,7 @@ void LLVMRustAddLastExtensionPasses(
+   SUBTARGET_MSP430                                                             \
+   SUBTARGET_SPARC                                                              \
+   SUBTARGET_HEXAGON                                                            \
++  SUBTARGET_XTENSA                                                             \
+   SUBTARGET_RISCV                                                              \
+ 
+ #define SUBTARGET(x)                                                           \
+diff --git a/compiler/rustc_llvm/src/lib.rs b/compiler/rustc_llvm/src/lib.rs
+index 9d23397ade0..8979432215c 100644
+--- a/compiler/rustc_llvm/src/lib.rs
++++ b/compiler/rustc_llvm/src/lib.rs
+@@ -163,6 +163,14 @@ pub fn initialize_available_targets() {
+         LLVMInitializeHexagonAsmPrinter,
+         LLVMInitializeHexagonAsmParser
+     );
++    init_target!(
++        llvm_component = "xtensa",
++        LLVMInitializeXtensaTargetInfo,
++        LLVMInitializeXtensaTarget,
++        LLVMInitializeXtensaTargetMC,
++        LLVMInitializeXtensaAsmPrinter,
++        LLVMInitializeXtensaAsmParser
++    );
+     init_target!(
+         llvm_component = "webassembly",
+         LLVMInitializeWebAssemblyTargetInfo,
+-- 
+2.26.2
+
