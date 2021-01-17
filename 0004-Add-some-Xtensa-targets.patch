@@ -1,24 +1,24 @@
-From e080dd72e762b240cca897d6302062cf23881c84 Mon Sep 17 00:00:00 2001
+From ce3539ad986f551957fc4c0b9a70c203694f35b7 Mon Sep 17 00:00:00 2001
 From: Scott Mabin <scott@mabez.dev>
 Date: Sat, 12 Sep 2020 23:36:21 +0100
-Subject: [PATCH 4/4] Add some Xtensa targets. ESP32, ESP8266 and a generic
- Xtensa target.
+Subject: [PATCH 4/4] Add some Xtensa targets
 
+ESP32, ESP8266 and a generic Xtensa target.
 ---
  compiler/rustc_target/src/spec/mod.rs         |  4 ++
- .../src/spec/xtensa_esp32_none_elf.rs         | 46 +++++++++++++++++++
- .../src/spec/xtensa_esp8266_none_elf.rs       | 46 +++++++++++++++++++
- .../rustc_target/src/spec/xtensa_none_elf.rs  | 45 ++++++++++++++++++
- 4 files changed, 141 insertions(+)
+ .../src/spec/xtensa_esp32_none_elf.rs         | 47 +++++++++++++++++++
+ .../src/spec/xtensa_esp8266_none_elf.rs       | 47 +++++++++++++++++++
+ .../rustc_target/src/spec/xtensa_none_elf.rs  | 46 ++++++++++++++++++
+ 4 files changed, 144 insertions(+)
  create mode 100644 compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
  create mode 100644 compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
  create mode 100644 compiler/rustc_target/src/spec/xtensa_none_elf.rs
 
 diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
-index d6e8b304380..91b54c6f98a 100644
+index f949bf95a50..b29b2b278ec 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -668,6 +668,10 @@ supported_targets! {
+@@ -655,6 +655,10 @@ fn $module() {
  
      ("nvptx64-nvidia-cuda", nvptx64_nvidia_cuda),
  
@@ -31,26 +31,27 @@ index d6e8b304380..91b54c6f98a 100644
      ("armv7-wrs-vxworks-eabihf", armv7_wrs_vxworks_eabihf),
 diff --git a/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
 new file mode 100644
-index 00000000000..31361adab1b
+index 00000000000..b1586fd8f97
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
-@@ -0,0 +1,46 @@
-+use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, TargetResult, RelocModel};
+@@ -0,0 +1,47 @@
++use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
 +
-+pub fn target() -> TargetResult {
-+    Ok(Target {
++pub fn target() -> Target {
++    Target {
 +        llvm_target: "xtensa-none-elf".to_string(),
-+        target_endian: "little".to_string(),
-+        target_pointer_width: "32".to_string(),
-+        target_c_int_width: "32".to_string(),
++        pointer_width: 32,
 +        data_layout: "e-m:e-p:32:32-i8:8:32-i16:16:32-i64:64-n32".to_string(),
 +        arch: "xtensa".to_string(),
-+        target_os: "none".to_string(),
-+        target_env: String::new(),
-+        target_vendor: String::new(),
-+        linker_flavor: LinkerFlavor::Gcc,
-+
++        
 +        options: TargetOptions {
++            endian: "little".to_string(),
++            c_int_width: "32".to_string(),
++            os: "none".to_string(),
++            env: String::new(),
++            vendor: String::new(),
++            linker_flavor: LinkerFlavor::Gcc,
++
 +            executables: true,
 +            cpu: "esp32".to_string(),
 +            linker: Some("xtensa-esp32-elf-gcc".to_string()),
@@ -79,31 +80,32 @@ index 00000000000..31361adab1b
 +
 +            ..Default::default()
 +        },
-+    })
++    }
 +}
 \ No newline at end of file
 diff --git a/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
 new file mode 100644
-index 00000000000..b26a822b17a
+index 00000000000..45772054988
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
-@@ -0,0 +1,46 @@
-+use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, TargetResult, RelocModel};
+@@ -0,0 +1,47 @@
++use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
 +
-+pub fn target() -> TargetResult {
-+    Ok(Target {
++pub fn target() -> Target {
++    Target {
 +        llvm_target: "xtensa-none-elf".to_string(),
-+        target_endian: "little".to_string(),
-+        target_pointer_width: "32".to_string(),
-+        target_c_int_width: "32".to_string(),
++        pointer_width: 32,
 +        data_layout: "e-m:e-p:32:32-i8:8:32-i16:16:32-i64:64-n32".to_string(),
 +        arch: "xtensa".to_string(),
-+        target_os: "none".to_string(),
-+        target_env: String::new(),
-+        target_vendor: String::new(),
-+        linker_flavor: LinkerFlavor::Gcc,
-+
++        
 +        options: TargetOptions {
++            endian: "little".to_string(),
++            c_int_width: "32".to_string(),
++            os: "none".to_string(),
++            env: String::new(),
++            vendor: String::new(),
++            linker_flavor: LinkerFlavor::Gcc,
++
 +            executables: true,
 +            cpu: "esp8266".to_string(),
 +            linker: Some("xtensa-lx106-elf-gcc".to_string()),
@@ -132,31 +134,32 @@ index 00000000000..b26a822b17a
 +
 +            ..Default::default()
 +        },
-+    })
++    }
 +}
 \ No newline at end of file
 diff --git a/compiler/rustc_target/src/spec/xtensa_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_none_elf.rs
 new file mode 100644
-index 00000000000..52cddb974d4
+index 00000000000..bc1deb40f99
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/xtensa_none_elf.rs
-@@ -0,0 +1,45 @@
-+use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, TargetResult, RelocModel};
+@@ -0,0 +1,46 @@
++use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
 +
-+pub fn target() -> TargetResult {
-+    Ok(Target {
++pub fn target() -> Target {
++    Target {
 +        llvm_target: "xtensa-none-elf".to_string(),
-+        target_endian: "little".to_string(),
-+        target_pointer_width: "32".to_string(),
-+        target_c_int_width: "32".to_string(),
++        pointer_width: 32,
 +        data_layout: "e-m:e-p:32:32-i8:8:32-i16:16:32-i64:64-n32".to_string(),
 +        arch: "xtensa".to_string(),
-+        target_os: "none".to_string(),
-+        target_env: String::new(),
-+        target_vendor: String::new(),
-+        linker_flavor: LinkerFlavor::Gcc,
-+
++        
 +        options: TargetOptions {
++            endian: "little".to_string(),
++            c_int_width: "32".to_string(),
++            os: "none".to_string(),
++            env: String::new(),
++            vendor: String::new(),
++            linker_flavor: LinkerFlavor::Gcc,
++
 +            executables: true,
 +            linker: Some("xtensa-esp32-elf-gcc".to_string()),
 +
@@ -184,7 +187,7 @@ index 00000000000..52cddb974d4
 +
 +            ..Default::default()
 +        },
-+    })
++    }
 +}
 \ No newline at end of file
 -- 

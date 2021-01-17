@@ -1,4 +1,4 @@
-From 46cc4e195f566f8740e2b9abec181e7c5f2e4bea Mon Sep 17 00:00:00 2001
+From a556ccc1586a79aac886a64e8c1c801bb448a892 Mon Sep 17 00:00:00 2001
 From: Scott Mabin <scott@mabez.dev>
 Date: Sat, 12 Sep 2020 23:20:14 +0100
 Subject: [PATCH 2/4] Teach rustc about the Xtensa arch.
@@ -10,19 +10,19 @@ Subject: [PATCH 2/4] Teach rustc about the Xtensa arch.
  3 files changed, 16 insertions(+)
 
 diff --git a/compiler/rustc_llvm/build.rs b/compiler/rustc_llvm/build.rs
-index 7f1e5cf336a..d17b35d9019 100644
+index 54b22ca49a2..a19c0b35ed8 100644
 --- a/compiler/rustc_llvm/build.rs
 +++ b/compiler/rustc_llvm/build.rs
 @@ -85,6 +85,7 @@ fn main() {
          "sparc",
          "nvptx",
          "hexagon",
-+        "xtensa"
++        "xtensa",
+         "riscv",
      ];
  
-     let mut version_cmd = Command::new(&llvm_config);
 diff --git a/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp b/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
-index 7b1c3f9ba2c..c08ca809508 100644
+index 71ca4f23bbb..f84d24b4fa1 100644
 --- a/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
 +++ b/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
 @@ -247,6 +247,12 @@ void LLVMRustAddLastExtensionPasses(
@@ -47,10 +47,10 @@ index 7b1c3f9ba2c..c08ca809508 100644
  
  #define SUBTARGET(x)                                                           \
 diff --git a/compiler/rustc_llvm/src/lib.rs b/compiler/rustc_llvm/src/lib.rs
-index 9d23397ade0..8979432215c 100644
+index a381290d46f..f6db86c57cb 100644
 --- a/compiler/rustc_llvm/src/lib.rs
 +++ b/compiler/rustc_llvm/src/lib.rs
-@@ -163,6 +163,14 @@ pub fn initialize_available_targets() {
+@@ -162,6 +162,14 @@ fn init() { }
          LLVMInitializeHexagonAsmPrinter,
          LLVMInitializeHexagonAsmParser
      );
