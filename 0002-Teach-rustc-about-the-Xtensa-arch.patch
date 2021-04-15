@@ -1,7 +1,7 @@
-From a556ccc1586a79aac886a64e8c1c801bb448a892 Mon Sep 17 00:00:00 2001
+From 05d3bb1468ee2fa454cfa15feef03f6339d6f852 Mon Sep 17 00:00:00 2001
 From: Scott Mabin <scott@mabez.dev>
 Date: Sat, 12 Sep 2020 23:20:14 +0100
-Subject: [PATCH 2/4] Teach rustc about the Xtensa arch.
+Subject: [PATCH 2/5] Teach rustc about the Xtensa arch.
 
 ---
  compiler/rustc_llvm/build.rs                     | 1 +
@@ -10,7 +10,7 @@ Subject: [PATCH 2/4] Teach rustc about the Xtensa arch.
  3 files changed, 16 insertions(+)
 
 diff --git a/compiler/rustc_llvm/build.rs b/compiler/rustc_llvm/build.rs
-index 54b22ca49a2..a19c0b35ed8 100644
+index 621363bed80..5a8c5d317ba 100644
 --- a/compiler/rustc_llvm/build.rs
 +++ b/compiler/rustc_llvm/build.rs
 @@ -85,6 +85,7 @@ fn main() {
@@ -22,10 +22,10 @@ index 54b22ca49a2..a19c0b35ed8 100644
      ];
  
 diff --git a/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp b/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
-index 71ca4f23bbb..f84d24b4fa1 100644
+index 2264908995b..f0e0c87e850 100644
 --- a/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
 +++ b/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
-@@ -247,6 +247,12 @@ void LLVMRustAddLastExtensionPasses(
+@@ -231,6 +231,12 @@ void LLVMRustAddLastExtensionPasses(
  #define SUBTARGET_SPARC
  #endif
  
@@ -38,7 +38,7 @@ index 71ca4f23bbb..f84d24b4fa1 100644
  #ifdef LLVM_COMPONENT_HEXAGON
  #define SUBTARGET_HEXAGON SUBTARGET(Hexagon)
  #else
-@@ -264,6 +270,7 @@ void LLVMRustAddLastExtensionPasses(
+@@ -248,6 +254,7 @@ void LLVMRustAddLastExtensionPasses(
    SUBTARGET_MSP430                                                             \
    SUBTARGET_SPARC                                                              \
    SUBTARGET_HEXAGON                                                            \
@@ -47,7 +47,7 @@ index 71ca4f23bbb..f84d24b4fa1 100644
  
  #define SUBTARGET(x)                                                           \
 diff --git a/compiler/rustc_llvm/src/lib.rs b/compiler/rustc_llvm/src/lib.rs
-index a381290d46f..f6db86c57cb 100644
+index 592010d78cf..3af3802ac37 100644
 --- a/compiler/rustc_llvm/src/lib.rs
 +++ b/compiler/rustc_llvm/src/lib.rs
 @@ -162,6 +162,14 @@ fn init() { }
@@ -66,5 +66,5 @@ index a381290d46f..f6db86c57cb 100644
          llvm_component = "webassembly",
          LLVMInitializeWebAssemblyTargetInfo,
 -- 
-2.26.2
+2.26.3
 

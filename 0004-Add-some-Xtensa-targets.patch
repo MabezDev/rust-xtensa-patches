@@ -1,28 +1,31 @@
-From ce3539ad986f551957fc4c0b9a70c203694f35b7 Mon Sep 17 00:00:00 2001
+From 0e8aacc3611ac6c82ce95ced38e9d8451daef199 Mon Sep 17 00:00:00 2001
 From: Scott Mabin <scott@mabez.dev>
 Date: Sat, 12 Sep 2020 23:36:21 +0100
-Subject: [PATCH 4/4] Add some Xtensa targets
+Subject: [PATCH 4/5] Add some Xtensa targets
 
-ESP32, ESP8266 and a generic Xtensa target.
+ESP32, ESP32s2, ESP8266 and a generic Xtensa target.
 ---
- compiler/rustc_target/src/spec/mod.rs         |  4 ++
- .../src/spec/xtensa_esp32_none_elf.rs         | 47 +++++++++++++++++++
- .../src/spec/xtensa_esp8266_none_elf.rs       | 47 +++++++++++++++++++
- .../rustc_target/src/spec/xtensa_none_elf.rs  | 46 ++++++++++++++++++
- 4 files changed, 144 insertions(+)
+ compiler/rustc_target/src/spec/mod.rs         |  5 ++
+ .../src/spec/xtensa_esp32_none_elf.rs         | 48 +++++++++++++++++++
+ .../src/spec/xtensa_esp32s2_none_elf.rs       | 48 +++++++++++++++++++
+ .../src/spec/xtensa_esp8266_none_elf.rs       | 48 +++++++++++++++++++
+ .../rustc_target/src/spec/xtensa_none_elf.rs  | 47 ++++++++++++++++++
+ 5 files changed, 196 insertions(+)
  create mode 100644 compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
+ create mode 100644 compiler/rustc_target/src/spec/xtensa_esp32s2_none_elf.rs
  create mode 100644 compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
  create mode 100644 compiler/rustc_target/src/spec/xtensa_none_elf.rs
 
 diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
-index f949bf95a50..b29b2b278ec 100644
+index 7a93bac72ca..71e9b09a397 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -655,6 +655,10 @@ fn $module() {
+@@ -797,6 +797,11 @@ fn to_json(&self) -> Json {
  
      ("nvptx64-nvidia-cuda", nvptx64_nvidia_cuda),
  
 +    ("xtensa-esp32-none-elf", xtensa_esp32_none_elf),
++    ("xtensa-esp32s2-none-elf", xtensa_esp32s2_none_elf),
 +    ("xtensa-esp8266-none-elf", xtensa_esp8266_none_elf),
 +    ("xtensa-none-elf", xtensa_none_elf),
 +
@@ -31,11 +34,12 @@ index f949bf95a50..b29b2b278ec 100644
      ("armv7-wrs-vxworks-eabihf", armv7_wrs_vxworks_eabihf),
 diff --git a/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
 new file mode 100644
-index 00000000000..b1586fd8f97
+index 00000000000..1397dd62a3b
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,48 @@
 +use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
++use crate::abi::Endian;
 +
 +pub fn target() -> Target {
 +    Target {
@@ -45,7 +49,7 @@ index 00000000000..b1586fd8f97
 +        arch: "xtensa".to_string(),
 +        
 +        options: TargetOptions {
-+            endian: "little".to_string(),
++            endian: Endian::Little,
 +            c_int_width: "32".to_string(),
 +            os: "none".to_string(),
 +            env: String::new(),
@@ -83,13 +87,14 @@ index 00000000000..b1586fd8f97
 +    }
 +}
 \ No newline at end of file
-diff --git a/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
+diff --git a/compiler/rustc_target/src/spec/xtensa_esp32s2_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp32s2_none_elf.rs
 new file mode 100644
-index 00000000000..45772054988
+index 00000000000..54820dcbce0
 --- /dev/null
-+++ b/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
-@@ -0,0 +1,47 @@
++++ b/compiler/rustc_target/src/spec/xtensa_esp32s2_none_elf.rs
+@@ -0,0 +1,48 @@
 +use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
++use crate::abi::Endian;
 +
 +pub fn target() -> Target {
 +    Target {
@@ -99,7 +104,62 @@ index 00000000000..45772054988
 +        arch: "xtensa".to_string(),
 +        
 +        options: TargetOptions {
-+            endian: "little".to_string(),
++            endian: Endian::Little,
++            c_int_width: "32".to_string(),
++            os: "none".to_string(),
++            env: String::new(),
++            vendor: String::new(),
++            linker_flavor: LinkerFlavor::Gcc,
++
++            executables: true,
++            cpu: "esp32-s2".to_string(),
++            linker: Some("xtensa-esp32s2-elf-gcc".to_string()),
++
++            max_atomic_width: Some(32),
++
++            // Because these devices have very little resources having an
++            // unwinder is too onerous so we default to "abort" because the
++            // "unwind" strategy is very rare.
++            panic_strategy: PanicStrategy::Abort,
++
++            // Similarly, one almost always never wants to use relocatable
++            // code because of the extra costs it involves.
++            relocation_model: RelocModel::Static,
++
++            emit_debug_gdb_scripts: false,
++
++            unsupported_abis: vec![
++                Abi::Stdcall,
++                Abi::Fastcall,
++                Abi::Vectorcall,
++                Abi::Thiscall,
++                Abi::Win64,
++                Abi::SysV64,
++            ],
++
++            ..Default::default()
++        },
++    }
++}
+\ No newline at end of file
+diff --git a/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
+new file mode 100644
+index 00000000000..de0424404d0
+--- /dev/null
++++ b/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
+@@ -0,0 +1,48 @@
++use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
++use crate::abi::Endian;
++
++pub fn target() -> Target {
++    Target {
++        llvm_target: "xtensa-none-elf".to_string(),
++        pointer_width: 32,
++        data_layout: "e-m:e-p:32:32-i8:8:32-i16:16:32-i64:64-n32".to_string(),
++        arch: "xtensa".to_string(),
++        
++        options: TargetOptions {
++            endian: Endian::Little,
 +            c_int_width: "32".to_string(),
 +            os: "none".to_string(),
 +            env: String::new(),
@@ -139,11 +199,12 @@ index 00000000000..45772054988
 \ No newline at end of file
 diff --git a/compiler/rustc_target/src/spec/xtensa_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_none_elf.rs
 new file mode 100644
-index 00000000000..bc1deb40f99
+index 00000000000..2fbe42b07f3
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/xtensa_none_elf.rs
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,47 @@
 +use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
++use crate::abi::Endian;
 +
 +pub fn target() -> Target {
 +    Target {
@@ -153,7 +214,7 @@ index 00000000000..bc1deb40f99
 +        arch: "xtensa".to_string(),
 +        
 +        options: TargetOptions {
-+            endian: "little".to_string(),
++            endian: Endian::Little,
 +            c_int_width: "32".to_string(),
 +            os: "none".to_string(),
 +            env: String::new(),
@@ -191,5 +252,5 @@ index 00000000000..bc1deb40f99
 +}
 \ No newline at end of file
 -- 
-2.26.2
+2.26.3
 
