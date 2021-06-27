@@ -1,4 +1,4 @@
-From 0e8aacc3611ac6c82ce95ced38e9d8451daef199 Mon Sep 17 00:00:00 2001
+From b0e355c5a70d4744306901a633c48fe72221ed45 Mon Sep 17 00:00:00 2001
 From: Scott Mabin <scott@mabez.dev>
 Date: Sat, 12 Sep 2020 23:36:21 +0100
 Subject: [PATCH 4/5] Add some Xtensa targets
@@ -6,21 +6,21 @@ Subject: [PATCH 4/5] Add some Xtensa targets
 ESP32, ESP32s2, ESP8266 and a generic Xtensa target.
 ---
  compiler/rustc_target/src/spec/mod.rs         |  5 ++
- .../src/spec/xtensa_esp32_none_elf.rs         | 48 +++++++++++++++++++
- .../src/spec/xtensa_esp32s2_none_elf.rs       | 48 +++++++++++++++++++
- .../src/spec/xtensa_esp8266_none_elf.rs       | 48 +++++++++++++++++++
- .../rustc_target/src/spec/xtensa_none_elf.rs  | 47 ++++++++++++++++++
- 5 files changed, 196 insertions(+)
+ .../src/spec/xtensa_esp32_none_elf.rs         | 50 +++++++++++++++++++
+ .../src/spec/xtensa_esp32s2_none_elf.rs       | 50 +++++++++++++++++++
+ .../src/spec/xtensa_esp8266_none_elf.rs       | 50 +++++++++++++++++++
+ .../rustc_target/src/spec/xtensa_none_elf.rs  | 49 ++++++++++++++++++
+ 5 files changed, 204 insertions(+)
  create mode 100644 compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
  create mode 100644 compiler/rustc_target/src/spec/xtensa_esp32s2_none_elf.rs
  create mode 100644 compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
  create mode 100644 compiler/rustc_target/src/spec/xtensa_none_elf.rs
 
 diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
-index 7a93bac72ca..71e9b09a397 100644
+index 2af46693449..1baeba8070d 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -797,6 +797,11 @@ fn to_json(&self) -> Json {
+@@ -882,6 +882,11 @@ fn $module() {
  
      ("nvptx64-nvidia-cuda", nvptx64_nvidia_cuda),
  
@@ -34,10 +34,10 @@ index 7a93bac72ca..71e9b09a397 100644
      ("armv7-wrs-vxworks-eabihf", armv7_wrs_vxworks_eabihf),
 diff --git a/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
 new file mode 100644
-index 00000000000..1397dd62a3b
+index 00000000000..ed522bfb801
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/xtensa_esp32_none_elf.rs
-@@ -0,0 +1,48 @@
+@@ -0,0 +1,50 @@
 +use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
 +use crate::abi::Endian;
 +
@@ -74,10 +74,12 @@ index 00000000000..1397dd62a3b
 +            emit_debug_gdb_scripts: false,
 +
 +            unsupported_abis: vec![
-+                Abi::Stdcall,
++                Abi::Stdcall { unwind: false },
++                Abi::Stdcall { unwind: true },
 +                Abi::Fastcall,
 +                Abi::Vectorcall,
-+                Abi::Thiscall,
++                Abi::Thiscall { unwind: false },
++                Abi::Thiscall { unwind: true },
 +                Abi::Win64,
 +                Abi::SysV64,
 +            ],
@@ -89,10 +91,10 @@ index 00000000000..1397dd62a3b
 \ No newline at end of file
 diff --git a/compiler/rustc_target/src/spec/xtensa_esp32s2_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp32s2_none_elf.rs
 new file mode 100644
-index 00000000000..54820dcbce0
+index 00000000000..4e404dad40d
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/xtensa_esp32s2_none_elf.rs
-@@ -0,0 +1,48 @@
+@@ -0,0 +1,50 @@
 +use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
 +use crate::abi::Endian;
 +
@@ -129,10 +131,12 @@ index 00000000000..54820dcbce0
 +            emit_debug_gdb_scripts: false,
 +
 +            unsupported_abis: vec![
-+                Abi::Stdcall,
++                Abi::Stdcall { unwind: false },
++                Abi::Stdcall { unwind: true },
 +                Abi::Fastcall,
 +                Abi::Vectorcall,
-+                Abi::Thiscall,
++                Abi::Thiscall { unwind: false },
++                Abi::Thiscall { unwind: true },
 +                Abi::Win64,
 +                Abi::SysV64,
 +            ],
@@ -144,10 +148,10 @@ index 00000000000..54820dcbce0
 \ No newline at end of file
 diff --git a/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
 new file mode 100644
-index 00000000000..de0424404d0
+index 00000000000..f928a2f7333
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/xtensa_esp8266_none_elf.rs
-@@ -0,0 +1,48 @@
+@@ -0,0 +1,50 @@
 +use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
 +use crate::abi::Endian;
 +
@@ -184,10 +188,12 @@ index 00000000000..de0424404d0
 +            emit_debug_gdb_scripts: false,
 +
 +            unsupported_abis: vec![
-+                Abi::Stdcall,
++                Abi::Stdcall { unwind: false },
++                Abi::Stdcall { unwind: true },
 +                Abi::Fastcall,
 +                Abi::Vectorcall,
-+                Abi::Thiscall,
++                Abi::Thiscall { unwind: false },
++                Abi::Thiscall { unwind: true },
 +                Abi::Win64,
 +                Abi::SysV64,
 +            ],
@@ -199,10 +205,10 @@ index 00000000000..de0424404d0
 \ No newline at end of file
 diff --git a/compiler/rustc_target/src/spec/xtensa_none_elf.rs b/compiler/rustc_target/src/spec/xtensa_none_elf.rs
 new file mode 100644
-index 00000000000..2fbe42b07f3
+index 00000000000..8fe98a1abe6
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/xtensa_none_elf.rs
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,49 @@
 +use crate::spec::{abi::Abi, LinkerFlavor, PanicStrategy, Target, TargetOptions, RelocModel};
 +use crate::abi::Endian;
 +
@@ -238,10 +244,12 @@ index 00000000000..2fbe42b07f3
 +            emit_debug_gdb_scripts: false,
 +
 +            unsupported_abis: vec![
-+                Abi::Stdcall,
++                Abi::Stdcall { unwind: false },
++                Abi::Stdcall { unwind: true },
 +                Abi::Fastcall,
 +                Abi::Vectorcall,
-+                Abi::Thiscall,
++                Abi::Thiscall { unwind: false },
++                Abi::Thiscall { unwind: true },
 +                Abi::Win64,
 +                Abi::SysV64,
 +            ],
@@ -252,5 +260,5 @@ index 00000000000..2fbe42b07f3
 +}
 \ No newline at end of file
 -- 
-2.26.3
+2.31.1
 

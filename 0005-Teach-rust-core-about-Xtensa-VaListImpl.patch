@@ -1,4 +1,4 @@
-From c051584f1029a08f2fd8e28ccffffe7c89ea64de Mon Sep 17 00:00:00 2001
+From b02cfad301e2e4ea2820ea2337be3820bac65594 Mon Sep 17 00:00:00 2001
 From: "Brian J. Tarricone" <brian@tarricone.org>
 Date: Mon, 15 Feb 2021 23:32:16 -0800
 Subject: [PATCH 5/5] Teach rust core about Xtensa VaListImpl
@@ -8,10 +8,10 @@ Subject: [PATCH 5/5] Teach rust core about Xtensa VaListImpl
  1 file changed, 25 insertions(+), 6 deletions(-)
 
 diff --git a/library/core/src/ffi.rs b/library/core/src/ffi.rs
-index 4b303acfd3b..ff9ce5998ca 100644
+index b208ddd4b27..cbdd9c667cc 100644
 --- a/library/core/src/ffi.rs
 +++ b/library/core/src/ffi.rs
-@@ -61,7 +61,7 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+@@ -60,7 +60,7 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
  /// Basic implementation of a `va_list`.
  // The name is WIP, using `VaListImpl` for now.
  #[cfg(any(
@@ -20,7 +20,7 @@ index 4b303acfd3b..ff9ce5998ca 100644
      all(target_arch = "aarch64", any(target_os = "macos", target_os = "ios")),
      target_arch = "wasm32",
      target_arch = "asmjs",
-@@ -84,7 +84,7 @@ pub struct VaListImpl<'f> {
+@@ -83,7 +83,7 @@ pub struct VaListImpl<'f> {
  }
  
  #[cfg(any(
@@ -29,7 +29,7 @@ index 4b303acfd3b..ff9ce5998ca 100644
      all(target_arch = "aarch64", any(target_os = "macos", target_os = "ios")),
      target_arch = "wasm32",
      target_arch = "asmjs",
-@@ -169,6 +169,24 @@ pub struct VaListImpl<'f> {
+@@ -168,6 +168,24 @@ pub struct VaListImpl<'f> {
      _marker: PhantomData<&'f mut &'f c_void>,
  }
  
@@ -54,7 +54,7 @@ index 4b303acfd3b..ff9ce5998ca 100644
  /// A wrapper for a `va_list`
  #[repr(transparent)]
  #[derive(Debug)]
-@@ -183,7 +201,8 @@ pub struct VaList<'a, 'f: 'a> {
+@@ -182,7 +200,8 @@ pub struct VaList<'a, 'f: 'a> {
          all(
              not(target_arch = "aarch64"),
              not(target_arch = "powerpc"),
@@ -64,7 +64,7 @@ index 4b303acfd3b..ff9ce5998ca 100644
          ),
          all(target_arch = "aarch64", any(target_os = "macos", target_os = "ios")),
          target_arch = "wasm32",
-@@ -193,7 +212,7 @@ pub struct VaList<'a, 'f: 'a> {
+@@ -192,7 +211,7 @@ pub struct VaList<'a, 'f: 'a> {
      inner: VaListImpl<'f>,
  
      #[cfg(all(
@@ -73,7 +73,7 @@ index 4b303acfd3b..ff9ce5998ca 100644
          any(not(target_arch = "aarch64"), not(any(target_os = "macos", target_os = "ios"))),
          not(target_arch = "wasm32"),
          not(target_arch = "asmjs"),
-@@ -205,7 +224,7 @@ pub struct VaList<'a, 'f: 'a> {
+@@ -204,7 +223,7 @@ pub struct VaList<'a, 'f: 'a> {
  }
  
  #[cfg(any(
@@ -82,7 +82,7 @@ index 4b303acfd3b..ff9ce5998ca 100644
      all(target_arch = "aarch64", any(target_os = "macos", target_os = "ios")),
      target_arch = "wasm32",
      target_arch = "asmjs",
-@@ -226,7 +245,7 @@ pub fn as_va_list<'a>(&'a mut self) -> VaList<'a, 'f> {
+@@ -225,7 +244,7 @@ pub fn as_va_list<'a>(&'a mut self) -> VaList<'a, 'f> {
  }
  
  #[cfg(all(
@@ -92,5 +92,5 @@ index 4b303acfd3b..ff9ce5998ca 100644
      not(target_arch = "wasm32"),
      not(target_arch = "asmjs"),
 -- 
-2.26.3
+2.31.1
 

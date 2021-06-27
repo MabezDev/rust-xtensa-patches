@@ -1,4 +1,4 @@
-From 16b8bc88f92119642c1643f45ad9fd38b47908e7 Mon Sep 17 00:00:00 2001
+From 5beece921a210b9e8e509b316e9990511370963d Mon Sep 17 00:00:00 2001
 From: Scott Mabin <scott@mabez.dev>
 Date: Wed, 14 Apr 2021 23:54:18 +0100
 Subject: [PATCH 1/5] Use llvm submodule with Xtensa arch support.
@@ -9,7 +9,7 @@ Subject: [PATCH 1/5] Use llvm submodule with Xtensa arch support.
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/.gitmodules b/.gitmodules
-index 40e6fc2c19d..09ef878e8d5 100644
+index d4a80efc277..09ef878e8d5 100644
 --- a/.gitmodules
 +++ b/.gitmodules
 @@ -36,8 +36,8 @@
@@ -17,19 +17,19 @@ index 40e6fc2c19d..09ef878e8d5 100644
  [submodule "src/llvm-project"]
  	path = src/llvm-project
 -	url = https://github.com/rust-lang/llvm-project.git
--	branch = rustc/11.0-2021-01-05
+-	branch = rustc/12.0-2021-04-15
 +	url = https://github.com/espressif/llvm-project
 +	branch = xtensa_release_11.0.0
  [submodule "src/doc/embedded-book"]
  	path = src/doc/embedded-book
  	url = https://github.com/rust-embedded/book.git
 diff --git a/src/llvm-project b/src/llvm-project
-index c6f9d6db7b0..72de7ca254b 160000
+index 5f67a571577..65ed48e8188 160000
 --- a/src/llvm-project
 +++ b/src/llvm-project
 @@ -1 +1 @@
--Subproject commit c6f9d6db7b0c4677d1aae8977505fe6340a3aae2
-+Subproject commit 72de7ca254b47a76ff7f34202cfb4cc73c288301
+-Subproject commit 5f67a5715771b7d29e4713e8d68338602d216dcf
++Subproject commit 65ed48e8188320bf08d6ee7d7d3c19cf8b785406
 -- 
-2.26.3
+2.31.1
 

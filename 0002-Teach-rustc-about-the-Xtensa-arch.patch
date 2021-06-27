@@ -1,4 +1,4 @@
-From 05d3bb1468ee2fa454cfa15feef03f6339d6f852 Mon Sep 17 00:00:00 2001
+From 8ee8dddb744bc4a2b045ab4c3a8727c635b65706 Mon Sep 17 00:00:00 2001
 From: Scott Mabin <scott@mabez.dev>
 Date: Sat, 12 Sep 2020 23:20:14 +0100
 Subject: [PATCH 2/5] Teach rustc about the Xtensa arch.
@@ -10,7 +10,7 @@ Subject: [PATCH 2/5] Teach rustc about the Xtensa arch.
  3 files changed, 16 insertions(+)
 
 diff --git a/compiler/rustc_llvm/build.rs b/compiler/rustc_llvm/build.rs
-index 621363bed80..5a8c5d317ba 100644
+index 301ed639f3b..050d1d10581 100644
 --- a/compiler/rustc_llvm/build.rs
 +++ b/compiler/rustc_llvm/build.rs
 @@ -85,6 +85,7 @@ fn main() {
@@ -22,10 +22,10 @@ index 621363bed80..5a8c5d317ba 100644
      ];
  
 diff --git a/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp b/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
-index 2264908995b..f0e0c87e850 100644
+index 617b2ed970e..2f58174d994 100644
 --- a/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
 +++ b/compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp
-@@ -231,6 +231,12 @@ void LLVMRustAddLastExtensionPasses(
+@@ -235,6 +235,12 @@ void LLVMRustAddLastExtensionPasses(
  #define SUBTARGET_SPARC
  #endif
  
@@ -38,7 +38,7 @@ index 2264908995b..f0e0c87e850 100644
  #ifdef LLVM_COMPONENT_HEXAGON
  #define SUBTARGET_HEXAGON SUBTARGET(Hexagon)
  #else
-@@ -248,6 +254,7 @@ void LLVMRustAddLastExtensionPasses(
+@@ -252,6 +258,7 @@ void LLVMRustAddLastExtensionPasses(
    SUBTARGET_MSP430                                                             \
    SUBTARGET_SPARC                                                              \
    SUBTARGET_HEXAGON                                                            \
@@ -47,10 +47,10 @@ index 2264908995b..f0e0c87e850 100644
  
  #define SUBTARGET(x)                                                           \
 diff --git a/compiler/rustc_llvm/src/lib.rs b/compiler/rustc_llvm/src/lib.rs
-index 592010d78cf..3af3802ac37 100644
+index 555aefb1929..dae3b447f67 100644
 --- a/compiler/rustc_llvm/src/lib.rs
 +++ b/compiler/rustc_llvm/src/lib.rs
-@@ -162,6 +162,14 @@ fn init() { }
+@@ -159,6 +159,14 @@ fn init() { }
          LLVMInitializeHexagonAsmPrinter,
          LLVMInitializeHexagonAsmParser
      );
@@ -66,5 +66,5 @@ index 592010d78cf..3af3802ac37 100644
          llvm_component = "webassembly",
          LLVMInitializeWebAssemblyTargetInfo,
 -- 
-2.26.3
+2.31.1
 

@@ -1,4 +1,4 @@
-From bfc577ab2208db442ee7d356a21ae9c78e2b2d25 Mon Sep 17 00:00:00 2001
+From 2ed078f0b0ba5fb0b5104e3a334b11503eec5a9e Mon Sep 17 00:00:00 2001
 From: Scott Mabin <scott@mabez.dev>
 Date: Sat, 12 Sep 2020 23:31:14 +0100
 Subject: [PATCH 3/5] Teach rustc about the Xtensa call ABI.
@@ -10,7 +10,7 @@ Subject: [PATCH 3/5] Teach rustc about the Xtensa call ABI.
  create mode 100644 compiler/rustc_target/src/abi/call/xtensa.rs
 
 diff --git a/compiler/rustc_target/src/abi/call/mod.rs b/compiler/rustc_target/src/abi/call/mod.rs
-index 9c49922c286..5045e9d5d4d 100644
+index 0cf2441d84e..e74c61d56aa 100644
 --- a/compiler/rustc_target/src/abi/call/mod.rs
 +++ b/compiler/rustc_target/src/abi/call/mod.rs
 @@ -7,6 +7,7 @@
@@ -21,14 +21,14 @@ index 9c49922c286..5045e9d5d4d 100644
  mod mips;
  mod mips64;
  mod msp430;
-@@ -636,6 +637,7 @@ pub fn adjust_for_cabi<C>(&mut self, cx: &C, abi: spec::abi::Abi) -> Result<(),
+@@ -645,6 +646,7 @@ pub fn adjust_for_cabi<C>(&mut self, cx: &C, abi: spec::abi::Abi) -> Result<(),
              "nvptx" => nvptx::compute_abi_info(self),
              "nvptx64" => nvptx64::compute_abi_info(self),
              "hexagon" => hexagon::compute_abi_info(self),
 +            "xtensa" => xtensa::compute_abi_info(cx, self),
              "riscv32" | "riscv64" => riscv::compute_abi_info(cx, self),
-             "wasm32" => match cx.target_spec().os.as_str() {
-                 "emscripten" | "wasi" => wasm32::compute_abi_info(cx, self),
+             "wasm32" | "wasm64" => {
+                 if cx.target_spec().adjust_abi(abi) == spec::abi::Abi::Wasm {
 diff --git a/compiler/rustc_target/src/abi/call/xtensa.rs b/compiler/rustc_target/src/abi/call/xtensa.rs
 new file mode 100644
 index 00000000000..422745d0a9e
@@ -147,5 +147,5 @@ index 00000000000..422745d0a9e
 +}
 \ No newline at end of file
 -- 
-2.26.3
+2.31.1
 
